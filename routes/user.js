@@ -6,7 +6,7 @@ var passportConf = require('../config/passport');
 router.get('/login', function(req, res){
   if (req.user) return res.redirect('/');
 
-  res.render('account/login', {message: req.flash('loginMessage')});
+  res.render('accounts/login', {message: req.flash('loginMessage')});
 });
 
 router.post('/login', passport.authenticate('local-login', {
@@ -14,6 +14,13 @@ router.post('/login', passport.authenticate('local-login', {
   failureRedirect: '/login',
   failureFlash: true
 }));
+
+router.get('/profile', function(req, res){
+  User.findOne({_id: req.user._id}, function(err, user){
+    if (err) return next(err);
+    res.render('accounts/profile', {user: user});
+  });
+});
 
 router.get('/signup', function(req, res){
   res.render('accounts/signup', {errors: req.flash('errors')});
@@ -41,5 +48,10 @@ router.post('/signup', function(req, res, next){
 
 
 });
+
+ router.get('/logout', function(req, res, next){
+   req.logout();
+   res.redirect('/');
+ })
 
 module.exports = router;

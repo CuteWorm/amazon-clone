@@ -13,7 +13,6 @@ passport.deserializeUser(function(id, done){
     done(err, user);
   });
 });
-console.log(passport.use.toString());
 // middleware
 passport.use('local-login', new LocalStrategy({
   usernameField: 'email',
