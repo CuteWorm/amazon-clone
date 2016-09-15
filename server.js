@@ -14,8 +14,9 @@ var MongoStore = require('connect-mongo/es5')(session);
 
 var passport = require('passport');
 
-var User = require('./models/user');
+//var User = require('./models/user');
 var secret = require('./config/secret');
+var Category = require('./models/category');
 
 // Init app
 var app = express();
@@ -59,10 +60,23 @@ app.use(function(req, res, next){
 	next();
 });
 
+// include all categories into any response
+app.use(function(req, res, next){
+	Category.find({}, function(err, categories) {
+		if (err) return next(err);
+		res.locals.categories = categories;
+		next();
+	});
+});
+
 var mainRoutes = require('./routes/main');
 var userRoutes = require('./routes/user');
+var adminRoutes = require('./routes/admin');
+var apiRoutes = require('./api/api');
 app.use(mainRoutes);
 app.use(userRoutes);
+app.use(adminRoutes);
+app.use('/api', apiRoutes);
 
 
 app.listen(3000, function(err){
